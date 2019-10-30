@@ -2,7 +2,7 @@
     "name": "phoole/route",
     "type": "library",
     "license": "Apache-2.0",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Simple & slim routing library for PHP",
     "keywords": ["phoole", "library", "php", "psr-7", "psr-15", "middleware", "route", "fast-route", "swoole"],
     "authors": [
