@@ -89,7 +89,7 @@ class FastRouteParser implements ParserInterface
     {
         list($regex, $map) = $this->convert($routePattern);
         $this->maps[$routeName] = $map;
-        $this->doneProcess($routeName, $routePattern, $regex);
+        $this->doneProcess($routeName, $regex);
         return $regex;
     }
 
@@ -217,12 +217,10 @@ class FastRouteParser implements ParserInterface
      * Update regex pool etc.
      *
      * @param  string $routeName
-     * @param  string $routePattern
      * @param  string $regex
      */
     protected function doneProcess(
         string $routeName,
-        string $routePattern,
         string $regex
     ) {
         $this->regex[$routeName] = $regex;
