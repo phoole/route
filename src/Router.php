@@ -32,7 +32,7 @@ class Router implements MiddlewareInterface
 {
     use RouteAwareTrait;
 
-    const URI_PARAMETERS =  '_parsedParams';
+    const URI_PARAMETERS = '_parsedParams';
     
     /**
      * @var ResolverInterface

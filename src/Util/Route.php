@@ -124,7 +124,6 @@ class Route
     protected function validatePattern(string $pattern): bool
     {
         if (
-            !is_string($pattern) ||
             substr_count($pattern, '[') !== substr_count($pattern, ']') ||
             substr_count($pattern, '{') !== substr_count($pattern, '}')
         ) {

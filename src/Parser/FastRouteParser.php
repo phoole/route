@@ -56,7 +56,7 @@ class FastRouteParser implements ParserInterface
     /**
      * another cache
      *
-     * @var    string[]
+     * @var    string[][]
      */
     protected $xmap = [];
 
