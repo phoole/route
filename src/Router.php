@@ -33,7 +33,7 @@ class Router implements MiddlewareInterface
     use RouteAwareTrait;
 
     const URI_PARAMETERS = '_parsedParams';
-    
+
     /**
      * @var ResolverInterface
      */
@@ -49,8 +49,8 @@ class Router implements MiddlewareInterface
      */
     public function __construct(
         array $routes = [],
-        ResolverInterface $resolver = null,
-        ParserInterface $parser = null
+        ?ResolverInterface $resolver = NULL,
+        ?ParserInterface $parser = NULL
     ) {
         $this
             ->loadRoutes($routes)
