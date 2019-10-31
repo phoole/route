@@ -7,13 +7,12 @@
  * @package   Phoole\Route
  * @copyright Copyright (c) 2019 Hong Zhang
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Route\Resolver;
 
 /**
  * DefaultResolver
- *
  * Resolving [controllerName, methodName]into a request handler callable
  *
  * @package Phoole\Route
@@ -32,10 +31,9 @@ class DefaultResolver implements ResolverInterface
     {
         $this->namespace = $namespace;
     }
-    
+
     /**
      * Resolve [controllerName, methodName] to a callable
-     *
      * {@inheritDoc}
      */
     public function resolve($notCallable): callable

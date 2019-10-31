@@ -7,7 +7,7 @@
  * @package   Phoole\Route
  * @copyright Copyright (c) 2019 Hong Zhang
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Route\Util;
 
@@ -51,7 +51,6 @@ class RouteGroup
     {
         $pattern = $route->getPattern();
         $hash = md5($route->getPattern());
-
         if (isset($this->routes[$hash])) {
             // add new method to existing route
             $this->routes[$hash]->addMethods($route);
@@ -72,29 +71,23 @@ class RouteGroup
         $request = $result->getRequest();
         $uri = $request->getUri()->getPath();
         $mth = $request->getMethod();
-
         $res = $this->parser->match($uri);
-
         if (empty($res)) {
-            return false;
+            return FALSE;
         }
-
         list($hash, $params) = $res;
         $route = $this->routes[$hash];
         if (isset($route->getMethods()[$mth])) {
             list($handler, $defaults) = $route->getMethods()[$mth];
-
             $request = $request->withAttribute(
                 Router::URI_PARAMETERS,
                 array_merge($defaults, $params)
             );
-
             $result->setHandler($handler);
             $result->setRoute($route);
             $result->setRequest($request);
-            return true;
+            return TRUE;
         }
-
-        return false;
+        return FALSE;
     }
 }

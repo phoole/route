@@ -7,7 +7,7 @@
  * @package   Phoole\Route
  * @copyright Copyright (c) 2019 Hong Zhang
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Route\Parser;
 
@@ -19,11 +19,18 @@ namespace Phoole\Route\Parser;
 class FastRouteParser implements ParserInterface
 {
     /**
+     * @var    string
+     */
+    const MATCH_GROUP_NAME = "\s*([a-zA-Z][a-zA-Z0-9_]*)\s*";
+    const MATCH_GROUP_TYPE = ":\s*([^{}]*(?:\{(?-1)\}[^{}]*)*)";
+    const MATCH_SEGMENT    = "[^/]++";
+
+    /**
      * flag for new route added.
      *
      * @var    bool
      */
-    protected $modified = false;
+    protected $modified = FALSE;
 
     /**
      * regex storage
@@ -61,25 +68,18 @@ class FastRouteParser implements ParserInterface
     protected $xmap = [];
 
     /**
-     * @var    string
-     */
-    const MATCH_GROUP_NAME = "\s*([a-zA-Z][a-zA-Z0-9_]*)\s*";
-    const MATCH_GROUP_TYPE = ":\s*([^{}]*(?:\{(?-1)\}[^{}]*)*)";
-    const MATCH_SEGMENT = "[^/]++";
-    
-    /**
      * pattern shortcuts
      *
      * @var    string[]
      */
     protected $shortcuts = [
-        ':d}'   => ':[0-9]++}',             // digit only
-        ':l}'   => ':[a-z]++}',             // lower case
-        ':u}'   => ':[A-Z]++}',             // upper case
-        ':a}'   => ':[0-9a-zA-Z]++}',       // alphanumeric
-        ':c}'   => ':[0-9a-zA-Z+_\-\.]++}', // common chars
-        ':nd}'  => ':[^0-9/]++}',           // not digits
-        ':xd}'  => ':[^0-9/][^/]*+}',       // no leading digits
+        ':d}'  => ':[0-9]++}',             // digit only
+        ':l}'  => ':[a-z]++}',             // lower case
+        ':u}'  => ':[A-Z]++}',             // upper case
+        ':a}'  => ':[0-9a-zA-Z]++}',       // alphanumeric
+        ':c}'  => ':[0-9a-zA-Z+_\-\.]++}', // common chars
+        ':nd}' => ':[^0-9/]++}',           // not digits
+        ':xd}' => ':[^0-9/][^/]*+}',       // no leading digits
     ];
 
     /**
@@ -91,6 +91,47 @@ class FastRouteParser implements ParserInterface
         $this->maps[$routeName] = $map;
         $this->doneProcess($routeName, $regex);
         return $regex;
+    }
+
+    /**
+     * Convert to regex
+     *
+     * @param  string $pattern  pattern to parse
+     * @return array
+     */
+    protected function convert(string $pattern): array
+    {
+        $ph = sprintf("\{%s(?:%s)?\}", self::MATCH_GROUP_NAME, self::MATCH_GROUP_TYPE);
+
+        // count placeholders
+        $map = $m = [];
+        if (preg_match_all('~' . $ph . '~x', $pattern, $m)) {
+            $map = $m[1];
+        }
+
+        $result = preg_replace(
+            [
+                '~' . $ph . '(*SKIP)(*FAIL) | \[~x', '~' . $ph . '(*SKIP)(*FAIL) | \]~x',
+                '~\{' . self::MATCH_GROUP_NAME . '\}~x', '~' . $ph . '~x',
+            ],
+            ['(?:', ')?', '{\\1:' . self::MATCH_SEGMENT . '}', '(\\2)'],
+            strtr('/' . trim($pattern, '/'), $this->shortcuts)
+        );
+        return [$result, $map];
+    }
+
+    /**
+     * Update regex pool etc.
+     *
+     * @param  string $routeName
+     * @param  string $regex
+     */
+    protected function doneProcess(
+        string $routeName,
+        string $regex
+    ) {
+        $this->regex[$routeName] = $regex;
+        $this->modified = TRUE;
     }
 
     /**
@@ -110,34 +151,6 @@ class FastRouteParser implements ParserInterface
     }
 
     /**
-     * Convert to regex
-     *
-     * @param  string $pattern pattern to parse
-     * @return array
-     */
-    protected function convert(string $pattern): array
-    {
-        $ph = sprintf("\{%s(?:%s)?\}", self::MATCH_GROUP_NAME, self::MATCH_GROUP_TYPE);
-
-        // count placeholders
-        $map = $m = [];
-        if (preg_match_all('~' . $ph . '~x', $pattern, $m)) {
-            $map = $m[1];
-        }
-
-        $result = preg_replace(
-            [
-            '~' . $ph . '(*SKIP)(*FAIL) | \[~x', '~' . $ph . '(*SKIP)(*FAIL) | \]~x',
-            '~\{' . self::MATCH_GROUP_NAME . '\}~x', '~' . $ph . '~x',
-            ],
-            ['(?:', ')?', '{\\1:' . self::MATCH_SEGMENT . '}', '(\\2)'],
-            strtr('/' . trim($pattern, '/'), $this->shortcuts)
-        );
-
-        return [$result, $map];
-    }
-
-    /**
      * Merge several (chunk size) regex into one
      *
      * @return array
@@ -150,7 +163,7 @@ class FastRouteParser implements ParserInterface
         }
 
         // merge
-        $this->data = array_chunk($this->regex, $this->chunk, true);
+        $this->data = array_chunk($this->regex, $this->chunk, TRUE);
         foreach ($this->data as $i => $arr) {
             $map = $this->getMapData($arr, $this->maps);
             $str = '~^(?|';
@@ -160,7 +173,7 @@ class FastRouteParser implements ParserInterface
             $this->data[$i] = substr($str, 0, -1) . ')$~x';
             $this->xmap[$i] = $map;
         }
-        $this->modified = false;
+        $this->modified = FALSE;
         return $this->data;
     }
 
@@ -178,7 +191,7 @@ class FastRouteParser implements ParserInterface
         }
         $new2 = array_flip($new1);
         $new3 = array_flip($new2);
-
+        
         foreach ($keys as $k) {
             if (!isset($new3[$k])) {
                 foreach (range(1, 200) as $i) {
@@ -197,8 +210,8 @@ class FastRouteParser implements ParserInterface
     /**
      * Fix matched placeholders, return with unique route key
      *
-     * @param  string $name the route key/name
-     * @param  array $matches desc
+     * @param  string $name     the route key/name
+     * @param  array  $matches  desc
      * @return array [ $name, $matches ]
      */
     protected function fixMatches(string $name, array $matches): array
@@ -211,19 +224,5 @@ class FastRouteParser implements ParserInterface
             }
         }
         return [$name, $res];
-    }
-
-    /**
-     * Update regex pool etc.
-     *
-     * @param  string $routeName
-     * @param  string $regex
-     */
-    protected function doneProcess(
-        string $routeName,
-        string $regex
-    ) {
-        $this->regex[$routeName] = $regex;
-        $this->modified = true;
     }
 }

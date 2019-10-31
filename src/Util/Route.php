@@ -7,7 +7,7 @@
  * @package   Phoole\Route
  * @copyright Copyright (c) 2019 Hong Zhang
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Route\Util;
 
@@ -29,11 +29,11 @@ class Route
     protected $pattern;
 
     /**
-     * @param  string|string[] $method  HTTP method[s]
-     * @param  string $pattern          URI pattern to match
-     * @param  mixed $handler           request handler
-     * @param  array $defaults          default parameters
-     * @throws \LogicException          if pattern not right
+     * @param  string|string[] $method    HTTP method[s]
+     * @param  string          $pattern   URI pattern to match
+     * @param  mixed           $handler   request handler
+     * @param  array           $defaults  default parameters
+     * @throws \LogicException            if pattern not right
      */
     public function __construct(
         $method,
@@ -47,11 +47,19 @@ class Route
     }
 
     /**
+     * @return string
+     */
+    public function getPattern(): string
+    {
+        return $this->pattern;
+    }
+
+    /**
      * Set route pattern
      *
-     * @param  string $pattern
+     * @param  string  $pattern
      * @param  array  &$defaults
-     * @return Route  $this
+     * @return Route   $this
      * @throws \LogicException  if pattern not right
      */
     public function setPattern(string $pattern, &$defaults): Route
@@ -62,34 +70,6 @@ class Route
             if (!empty($params)) {
                 $defaults = array_merge($params, $defaults);
             }
-        }
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPattern(): string
-    {
-        return $this->pattern;
-    }
-
-    /**
-     * Set methods(with related handler/defaults)
-     *
-     * @param  string|string[] $method
-     * @param  mixed $handler
-     * @param  array $defaults
-     * @return Route $this
-     */
-    public function setMethods($method, $handler, array $defaults): Route
-    {
-        $methods = is_string($method) ?
-            preg_split('~[^A-Z]+~', strtoupper($method), -1, PREG_SPLIT_NO_EMPTY) :
-            array_map('strtoupper', $method);
-        
-        foreach ($methods as $mth) {
-            $this->methods[$mth] = [$handler, $defaults];
         }
         return $this;
     }
@@ -113,7 +93,26 @@ class Route
     {
         return $this->methods;
     }
-    
+
+    /**
+     * Set methods(with related handler/defaults)
+     *
+     * @param  string|string[] $method
+     * @param  mixed           $handler
+     * @param  array           $defaults
+     * @return Route $this
+     */
+    public function setMethods($method, $handler, array $defaults): Route
+    {
+        $methods = is_string($method) ?
+            preg_split('~[^A-Z]+~', strtoupper($method), -1, PREG_SPLIT_NO_EMPTY) :
+            array_map('strtoupper', $method);
+        foreach ($methods as $mth) {
+            $this->methods[$mth] = [$handler, $defaults];
+        }
+        return $this;
+    }
+
     /**
      * Validate the pattern
      *
@@ -129,7 +128,7 @@ class Route
         ) {
             throw new \LogicException("Invalid route pattern '$pattern'");
         }
-        return true;
+        return TRUE;
     }
 
     /**
@@ -149,7 +148,6 @@ class Route
                 $repl[] = str_replace($m[2], '', $m[0]);
                 $vals[$m[1]] = substr($m[2], 1);
             }
-            
             $pattern = str_replace($srch, $repl, $pattern);
         }
         return [$pattern, $vals];

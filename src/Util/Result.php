@@ -7,13 +7,11 @@
  * @package   Phoole\Route
  * @copyright Copyright (c) 2019 Hong Zhang
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Route\Util;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Result
@@ -46,6 +44,14 @@ class Result
     }
 
     /**
+     * @return Route
+     */
+    public function getRoute(): Route
+    {
+        return $this->route;
+    }
+
+    /**
      * @param  Route $route
      * @return $this
      */
@@ -56,11 +62,11 @@ class Result
     }
 
     /**
-     * @return Route
+     * @return ServerRequestInterface
      */
-    public function getRoute(): Route
+    public function getRequest(): ServerRequestInterface
     {
-        return $this->route;
+        return $this->request;
     }
 
     /**
@@ -74,11 +80,11 @@ class Result
     }
 
     /**
-     * @return ServerRequestInterface
+     * @return mixed
      */
-    public function getRequest(): ServerRequestInterface
+    public function getHandler()
     {
-        return $this->request;
+        return $this->handler;
     }
 
     /**
@@ -92,21 +98,13 @@ class Result
     }
 
     /**
-     * @return mixed
-     */
-    public function getHandler()
-    {
-        return $this->handler;
-    }
-
-    /**
      * @return bool
      */
     public function isMatched(): bool
     {
         if ($this->route) {
-            return true;
+            return TRUE;
         }
-        return false;
+        return FALSE;
     }
 }

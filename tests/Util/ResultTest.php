@@ -1,45 +1,26 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Phoole\Route\Util\Route;
 use Phoole\Route\Util\Result;
+use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Psr7\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ResultTest extends TestCase
 {
     private $obj;
+
     private $ref;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->obj = new Result(new ServerRequest('GET', 'http://bingo.com/usr/10/2'));
-        $this->ref = new \ReflectionClass(get_class($this->obj));
-    }
-
-    protected function tearDown(): void
-    {
-        $this->obj = $this->ref = null;
-        parent::tearDown();
-    }
-
-    protected function invokeMethod($methodName, array $parameters = array())
-    {
-        $method = $this->ref->getMethod($methodName);
-        $method->setAccessible(true);
-        return $method->invokeArgs($this->obj, $parameters);
-    }
 
     public function getPrivateProperty($obj, $propertyName)
     {
         $ref = new \ReflectionClass(get_class($obj));
         $property = $ref->getProperty($propertyName);
-        $property->setAccessible(true);
+        $property->setAccessible(TRUE);
         return $property->getValue($obj);
     }
 
@@ -51,9 +32,8 @@ class ResultTest extends TestCase
     {
         $pattern = '/usr[/{uid:d}][/{pid:d}]';
         $this->obj->setRoute(new Route('GET,HEAD', $pattern, function() {
-            return false;
+            return FALSE;
         }, ['uid' => 100]));
-
         $route = $this->obj->getRoute();
         $this->assertEquals($pattern, $route->getPattern());
         $this->assertEquals(2, count($route->getMethods()));
@@ -73,7 +53,9 @@ class ResultTest extends TestCase
      */
     public function testGetHandler()
     {
-        $handler = function() { return true; };
+        $handler = function() {
+            return TRUE;
+        };
         $this->obj->setHandler($handler);
         $this->assertTrue($handler === $this->obj->getHandler());
     }
@@ -84,12 +66,30 @@ class ResultTest extends TestCase
     public function testIsMatched()
     {
         $this->assertFalse($this->obj->isMatched());
-
         $pattern = '/usr[/{uid:d}][/{pid:d}]';
         $this->obj->setRoute(new Route('GET,HEAD', $pattern, function() {
-            return false;
+            return FALSE;
         }, ['uid' => 100]));
-
         $this->assertTrue($this->obj->isMatched());
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->obj = new Result(new ServerRequest('GET', 'http://bingo.com/usr/10/2'));
+        $this->ref = new \ReflectionClass(get_class($this->obj));
+    }
+
+    protected function tearDown(): void
+    {
+        $this->obj = $this->ref = NULL;
+        parent::tearDown();
+    }
+
+    protected function invokeMethod($methodName, array $parameters = array())
+    {
+        $method = $this->ref->getMethod($methodName);
+        $method->setAccessible(TRUE);
+        return $method->invokeArgs($this->obj, $parameters);
     }
 }

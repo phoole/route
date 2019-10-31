@@ -4,7 +4,17 @@
     "license": "Apache-2.0",
     "version": "1.0.2",
     "description": "Simple & slim routing library for PHP",
-    "keywords": ["phoole", "library", "php", "psr-7", "psr-15", "middleware", "route", "fast-route", "swoole"],
+    "keywords": [
+        "phoole",
+        "library",
+        "php",
+        "psr-7",
+        "psr-15",
+        "middleware",
+        "route",
+        "fast-route",
+        "swoole"
+    ],
     "authors": [
         {
             "name": "Hong Zhang",

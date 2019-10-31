@@ -7,11 +7,10 @@
  * @package   Phoole\Route
  * @copyright Copyright (c) 2019 Hong Zhang
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Route\Util;
 
-use Phoole\Route\Util\Result;
 use Phoole\Route\Parser\ParserInterface;
 
 /**
@@ -32,6 +31,19 @@ trait RouteAwareTrait
     protected $groups = [];
 
     /**
+     * Add a GET route
+     *
+     * @param  string $pattern
+     * @param  mixed  $handler
+     * @param  array  $defaults  default parameters if any
+     * @return $this
+     */
+    public function addGet(string $pattern, $handler, array $defaults = [])
+    {
+        return $this->addRoute(new Route('GET', $pattern, $handler, $defaults));
+    }
+
+    /**
      * Add one route
      *
      * @param  Route $route
@@ -49,24 +61,25 @@ trait RouteAwareTrait
     }
 
     /**
-     * Add a GET route
+     * Extract the URI prefix, '/usr/' from '/user/uid/1'
      *
-     * @param  string $pattern
-     * @param  mixed $handler
-     * @param  array $defaults  default parameters if any
-     * @return $this
+     * @param  string $uri  URI or pattern
+     * @return string
      */
-    public function addGet(string $pattern, $handler, array $defaults = [])
+    protected function extractPrefix(string $uri): string
     {
-        return $this->addRoute(new Route('GET', $pattern, $handler, $defaults));
+        if (preg_match('~^(/[^/\[\]\{\}]+)~', $uri, $matched)) {
+            return $matched[1];
+        }
+        return '/';
     }
 
     /**
      * Add a POST route
      *
      * @param  string $pattern
-     * @param  mixed $handler
-     * @param  array $defaults  default parameters if any
+     * @param  mixed  $handler
+     * @param  array  $defaults  default parameters if any
      * @return $this
      */
     public function addPost(string $pattern, $handler, array $defaults = [])
@@ -76,7 +89,6 @@ trait RouteAwareTrait
 
     /**
      * Load routes from config array
-     *
      * ```php
      * $routes = [
      *     ['GET', '/user/{uid}', function() {}, ['uid' => 12]],
@@ -110,23 +122,9 @@ trait RouteAwareTrait
     }
 
     /**
-     * Extract the URI prefix, '/usr/' from '/user/uid/1'
-     *
-     * @param  string $uri  URI or pattern
-     * @return string
-     */
-    protected function extractPrefix(string $uri): string
-    {
-        if (preg_match('~^(/[^/\[\]\{\}]+)~', $uri, $matched)) {
-            return $matched[1];
-        }
-        return '/';
-    }
-
-    /**
      * Match a http request with all RouteGroup[s]
      *
-     * @param  Result $result;
+     * @param  Result $result  ;
      * @return Result
      */
     protected function groupMatch(Result $result): Result

@@ -7,21 +7,22 @@
  * @package   Phoole\Route
  * @copyright Copyright (c) 2019 Hong Zhang
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Phoole\Route;
 
-use Phoole\Route\Util\Result;
-use Phoole\Route\Util\RouteGroup;
-use Phoole\Route\Util\RouteAwareTrait;
-use Phoole\Route\Parser\ParserInterface;
-use Phoole\Route\Parser\FastRouteParser;
-use Phoole\Route\Resolver\DefaultResolver;
-use Phoole\Route\Resolver\ResolverInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\{
+    Message\ResponseInterface,
+    Server\MiddlewareInterface,
+    Server\RequestHandlerInterface,
+    Message\ServerRequestInterface};
+use Phoole\Route\{
+    Util\Result,
+    Util\RouteAwareTrait,
+    Parser\ParserInterface,
+    Parser\FastRouteParser,
+    Resolver\DefaultResolver,
+    Resolver\ResolverInterface};
 
 /**
  * Router
@@ -31,7 +32,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class Router implements MiddlewareInterface
 {
     use RouteAwareTrait;
-
     const URI_PARAMETERS = '_parsedParams';
 
     /**
@@ -42,10 +42,9 @@ class Router implements MiddlewareInterface
     /**
      * Load route definitions and set the parser
      *
-     * @param  array $routes route definitions
+     * @param  array             $routes  route definitions
      * @param  ResolverInterface $resolver
-     * @param  ParserInterface $parser
-     *
+     * @param  ParserInterface   $parser
      */
     public function __construct(
         array $routes = [],
@@ -59,15 +58,25 @@ class Router implements MiddlewareInterface
     }
 
     /**
-     * Match http request with predefined routes, returns a Result object
+     * @param  ResolverInterface $resolver
+     * @return Router $this
+     */
+    protected function setResolver(ResolverInterface $resolver): Router
+    {
+        $this->resolver = $resolver;
+        return $this;
+    }
+
+    /**
+     * Utility function for getting parameter values stored in the request
      *
      * @param  ServerRequestInterface $request
-     * @return Result
+     * @return array
      */
-    public function match(ServerRequestInterface $request): Result
+    public static function getParams(ServerRequestInterface $request): array
     {
-        $result = new Result($request);
-        return $this->groupMatch($result);
+        $params = $request->getAttribute(Router::URI_PARAMETERS) ?? [];
+        return $params;
     }
 
     /**
@@ -86,25 +95,15 @@ class Router implements MiddlewareInterface
     }
 
     /**
-     * Utility function for getting parameter values stored in the request
+     * Match http request with predefined routes, returns a Result object
      *
      * @param  ServerRequestInterface $request
-     * @return array
+     * @return Result
      */
-    public static function getParams(ServerRequestInterface $request): array
+    public function match(ServerRequestInterface $request): Result
     {
-        $params = $request->getAttribute(Router::URI_PARAMETERS) ?? [];
-        return $params;
-    }
-
-    /**
-     * @param  ResolverInterface $resolver
-     * @return Router $this
-     */
-    protected function setResolver(ResolverInterface $resolver): Router
-    {
-        $this->resolver = $resolver;
-        return $this;
+        $result = new Result($request);
+        return $this->groupMatch($result);
     }
 
     /**
@@ -116,7 +115,6 @@ class Router implements MiddlewareInterface
     {
         $request = $result->getRequest();
         $handler = $result->getHandler();
-
         if (is_callable($handler)) {
             return $handler($request);
         } elseif ($handler instanceof RequestHandlerInterface) {
