@@ -86,6 +86,18 @@ class Router implements MiddlewareInterface
     }
 
     /**
+     * Utility function for getting parameter values stored in the request
+     *
+     * @param  ServerRequestInterface $request
+     * @return array
+     */
+    public static function getParams(ServerRequestInterface $request): array
+    {
+        $params = $request->getAttribute(Router::URI_PARAMETERS) ?? [];
+        return $params;
+    }
+
+    /**
      * @param  ResolverInterface $resolver
      * @return Router $this
      */

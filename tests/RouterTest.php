@@ -66,7 +66,7 @@ class RouterTest extends TestCase
         $route = $result->getRoute();
         $this->assertEquals($pattern, $route->getPattern());
 
-        $params = $result->getRequest()->getAttribute(Router::URI_PARAMETERS);
+        $params = Router::getParams($result->getRequest());
         $this->assertEquals(['pid' => 100, 'uid' => '10'], $params);
     }
 }
