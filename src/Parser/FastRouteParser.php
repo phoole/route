@@ -102,13 +102,11 @@ class FastRouteParser implements ParserInterface
     protected function convert(string $pattern): array
     {
         $ph = sprintf("\{%s(?:%s)?\}", self::MATCH_GROUP_NAME, self::MATCH_GROUP_TYPE);
-
         // count placeholders
         $map = $m = [];
         if (preg_match_all('~' . $ph . '~x', $pattern, $m)) {
             $map = $m[1];
         }
-
         $result = preg_replace(
             [
                 '~' . $ph . '(*SKIP)(*FAIL) | \[~x', '~' . $ph . '(*SKIP)(*FAIL) | \]~x',
@@ -161,7 +159,6 @@ class FastRouteParser implements ParserInterface
         if (!$this->modified) {
             return $this->data;
         }
-
         // merge
         $this->data = array_chunk($this->regex, $this->chunk, TRUE);
         foreach ($this->data as $i => $arr) {
@@ -191,7 +188,6 @@ class FastRouteParser implements ParserInterface
         }
         $new2 = array_flip($new1);
         $new3 = array_flip($new2);
-        
         foreach ($keys as $k) {
             if (!isset($new3[$k])) {
                 foreach (range(1, 200) as $i) {

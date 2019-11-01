@@ -11,18 +11,16 @@ declare(strict_types = 1);
 
 namespace Phoole\Route;
 
-use Psr\Http\{
-    Message\ResponseInterface,
-    Server\MiddlewareInterface,
-    Server\RequestHandlerInterface,
-    Message\ServerRequestInterface};
-use Phoole\Route\{
-    Util\Result,
-    Util\RouteAwareTrait,
-    Parser\ParserInterface,
-    Parser\FastRouteParser,
-    Resolver\DefaultResolver,
-    Resolver\ResolverInterface};
+use Phoole\Route\Util\Result;
+use Phoole\Route\Util\RouteAwareTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Phoole\Route\Parser\ParserInterface;
+use Phoole\Route\Parser\FastRouteParser;
+use Phoole\Route\Resolver\DefaultResolver;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Phoole\Route\Resolver\ResolverInterface;
 
 /**
  * Router
