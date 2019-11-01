@@ -45,9 +45,9 @@ class RouteGroup
      * Add a route to the route group
      *
      * @param  Route $route
-     * @return RouteGroup $this
+     * @return $this
      */
-    public function addRoute(Route $route): RouteGroup
+    public function addRoute(Route $route)
     {
         $pattern = $route->getPattern();
         $hash = md5($route->getPattern());
@@ -58,6 +58,7 @@ class RouteGroup
             // add new route
             $this->routes[$hash] = $route;
         }
+
         $this->parser->parse($hash, $pattern);
         return $this;
     }
@@ -70,22 +71,44 @@ class RouteGroup
     {
         $request = $result->getRequest();
         $uri = $request->getUri()->getPath();
-        $mth = $request->getMethod();
-        $res = $this->parser->match($uri);
-        if (empty($res)) {
+        $matched = $this->parser->match($uri);
+
+        if (empty($matched)) {
+            // not matched
             return FALSE;
+        } else {
+            // matched
+            return $this->fetchMatched($matched, $result);
         }
-        list($hash, $params) = $res;
+    }
+
+    /**
+     * @param  array  $matched
+     * @param  Result $result
+     * @return bool
+     */
+    protected function fetchMatched(array $matched, Result $result): bool
+    {
+        // fetch the matched route
+        list($hash, $params) = $matched;
         $route = $this->routes[$hash];
-        if (isset($route->getMethods()[$mth])) {
-            list($handler, $defaults) = $route->getMethods()[$mth];
+
+        // check if method exists
+        $request = $result->getRequest();
+        $method = $request->getMethod();
+        if (isset($route->getMethods()[$method])) {
+            // update request
+            list($handler, $defaults) = $route->getMethods()[$method];
             $request = $request->withAttribute(
                 Router::URI_PARAMETERS,
                 array_merge($defaults, $params)
             );
+
+            // update result
             $result->setHandler($handler);
             $result->setRoute($route);
             $result->setRequest($request);
+
             return TRUE;
         }
         return FALSE;

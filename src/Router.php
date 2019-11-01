@@ -57,9 +57,9 @@ class Router implements MiddlewareInterface
 
     /**
      * @param  ResolverInterface $resolver
-     * @return Router $this
+     * @return $this
      */
-    protected function setResolver(ResolverInterface $resolver): Router
+    protected function setResolver(ResolverInterface $resolver)
     {
         $this->resolver = $resolver;
         return $this;

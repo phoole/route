@@ -53,10 +53,12 @@ trait RouteAwareTrait
     {
         // group routes base on the URI prefix
         $prefix = $this->extractPrefix($route->getPattern());
+
         if (!isset($this->groups[$prefix])) {
             $this->groups[$prefix] = new RouteGroup($this->parser);
         }
         $this->groups[$prefix]->addRoute($route);
+
         return $this;
     }
 

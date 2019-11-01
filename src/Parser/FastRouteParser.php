@@ -73,11 +73,11 @@ class FastRouteParser implements ParserInterface
      * @var    string[]
      */
     protected $shortcuts = [
-        ':d}'  => ':[0-9]++}',             // digit only
-        ':l}'  => ':[a-z]++}',             // lower case
-        ':u}'  => ':[A-Z]++}',             // upper case
-        ':a}'  => ':[0-9a-zA-Z]++}',       // alphanumeric
-        ':c}'  => ':[0-9a-zA-Z+_\-\.]++}', // common chars
+        ':d}' => ':[0-9]++}',             // digit only
+        ':l}' => ':[a-z]++}',             // lower case
+        ':u}' => ':[A-Z]++}',             // upper case
+        ':a}' => ':[0-9a-zA-Z]++}',       // alphanumeric
+        ':c}' => ':[0-9a-zA-Z+_\-\.]++}', // common chars
         ':nd}' => ':[^0-9/]++}',           // not digits
         ':xd}' => ':[^0-9/][^/]*+}',       // no leading digits
     ];

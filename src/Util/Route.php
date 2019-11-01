@@ -59,10 +59,10 @@ class Route
      *
      * @param  string  $pattern
      * @param  array  &$defaults
-     * @return Route   $this
+     * @return $this
      * @throws \LogicException  if pattern not right
      */
-    public function setPattern(string $pattern, &$defaults): Route
+    public function setPattern(string $pattern, &$defaults)
     {
         if ($this->validatePattern($pattern)) {
             list($pattern, $params) = $this->extractDefaults($pattern);
@@ -78,16 +78,16 @@ class Route
      * Add new methods from another route
      *
      * @param  Route $route  another route
-     * @return Route $this
+     * @return $this
      */
-    public function addMethods(Route $route): Route
+    public function addMethods(Route $route)
     {
         $this->methods = array_merge($this->methods, $route->getMethods());
         return $this;
     }
 
     /**
-     * @param  array
+     * @return  array
      */
     public function getMethods(): array
     {
@@ -100,9 +100,9 @@ class Route
      * @param  string|string[] $method
      * @param  mixed           $handler
      * @param  array           $defaults
-     * @return Route $this
+     * @return $this
      */
-    public function setMethods($method, $handler, array $defaults): Route
+    public function setMethods($method, $handler, array $defaults)
     {
         $methods = is_string($method) ?
             preg_split('~[^A-Z]+~', strtoupper($method), -1, PREG_SPLIT_NO_EMPTY) :

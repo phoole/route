@@ -55,7 +55,7 @@ class Result
      * @param  Route $route
      * @return $this
      */
-    public function setRoute(Route $route): Result
+    public function setRoute(Route $route)
     {
         $this->route = $route;
         return $this;
@@ -73,7 +73,7 @@ class Result
      * @param  ServerRequestInterface $request
      * @return $this
      */
-    public function setRequest(ServerRequestInterface $request): Result
+    public function setRequest(ServerRequestInterface $request)
     {
         $this->request = $request;
         return $this;
@@ -89,9 +89,9 @@ class Result
 
     /**
      * @param  mixed $handler
-     * @return Result
+     * @return $this
      */
-    public function setHandler($handler): Result
+    public function setHandler($handler)
     {
         $this->handler = $handler;
         return $this;
