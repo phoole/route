@@ -25,23 +25,42 @@ class DefaultResolver implements ResolverInterface
     protected $namespace;
 
     /**
-     * set the namespace to search thru
+     * @var string
      */
-    public function __construct(string $namespace = '')
-    {
+    protected $controllerSuffix;
+
+    /**
+     * var string
+     */
+    protected $actionSuffix;
+
+    /**
+     * set the namespace to search thru
+     *
+     * @param  string $namespace
+     * @param  string $controllerSuffix
+     * @param  string $actionSuffix
+     */
+    public function __construct(
+        string $namespace = '',
+        string $controllerSuffix = 'Controller',
+        string $actionSuffix = 'Action'
+    ) {
         $this->namespace = $namespace;
+        $this->controllerSuffix = $controllerSuffix;
+        $this->actionSuffix = $actionSuffix;
     }
 
     /**
-     * Resolve [controllerName, methodName] to a callable
+     * Resolve [controller, action] to a callable
      * {@inheritDoc}
      */
     public function resolve($notCallable): callable
     {
         try {
-            $controllerName = $this->namespace . '\\' . $notCallable[0];
-            $methodName = $notCallable[1];
-            $result = [new $controllerName(), $methodName];
+            $controller = $this->namespace . '\\' . $notCallable[0] . $this->controllerSuffix;
+            $action = $notCallable[1] . $this->actionSuffix;
+            $result = [new $controller(), $action];
             if (is_callable($result)) {
                 return $result;
             }

@@ -9,7 +9,7 @@ use Phoole\Route\Resolver\DefaultResolver;
 
 class myController
 {
-    public function myMethod()
+    public function myAction()
     {
         return TRUE;
     }
@@ -36,13 +36,13 @@ class DefaultResolverTest extends TestCase
     {
         $this->assertTrue(
             is_callable(
-                $this->obj->resolve([myController::class, 'myMethod'])
+                $this->obj->resolve(['my', 'my'])
             )
         );
-        $obj = new DefaultResolver(__NAMESPACE__);
+        $obj = new DefaultResolver(__NAMESPACE__, '', '');
         $this->assertTrue(
             is_callable(
-                $obj->resolve(['myController', 'myMethod'])
+                $obj->resolve(['myController', 'myAction'])
             )
         );
         $this->expectExceptionMessage('not found');
@@ -57,7 +57,7 @@ class DefaultResolverTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->obj = new DefaultResolver();
+        $this->obj = new DefaultResolver(__NAMESPACE__);
         $this->ref = new \ReflectionClass(get_class($this->obj));
     }
 
