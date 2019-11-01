@@ -1,53 +1,53 @@
 {
-    "name": "phoole/route",
-    "type": "library",
-    "license": "Apache-2.0",
-    "version": "1.0.3",
-    "description": "Simple & slim routing library for PHP",
-    "keywords": [
-        "phoole",
-        "library",
-        "php",
-        "psr-7",
-        "psr-15",
-        "middleware",
-        "route",
-        "fast-route",
-        "swoole"
-    ],
-    "authors": [
-        {
-            "name": "Hong Zhang",
-            "homepage": "https://github.com/phoole"
-        }
-    ],
-    "require": {
-        "php": ">=7.2.0",
-        "psr/http-message": "^1.0",
-        "psr/http-server-middleware": "^1.0.1",
-        "phoole/base": "^1.0.20"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^8",
-        "guzzlehttp/psr7": "1.*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Phoole\\Route\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Phoole\\Tests\\": "tests/"
-        }
-    },
-    "provide": {
-        "psr/http-server-middleware-implementation": "^1.0"
-    },
-    "minimum-stability": "dev",
-    "scripts": {
-        "test": "phpunit",
-        "check": "phpcs --standard=psr12 src/",
-        "format": "phpcbf --standard=psr12 src/"
+  "name": "phoole/route",
+  "type": "library",
+  "license": "Apache-2.0",
+  "version": "1.0.5",
+  "description": "Simple & slim routing library for PHP",
+  "keywords": [
+    "phoole",
+    "library",
+    "php",
+    "psr-7",
+    "psr-15",
+    "middleware",
+    "route",
+    "fast-route",
+    "swoole"
+  ],
+  "authors": [
+    {
+      "name": "Hong Zhang",
+      "homepage": "https://github.com/phoole"
     }
+  ],
+  "require": {
+    "php": ">=7.2.0",
+    "psr/http-message": "^1.0",
+    "psr/http-server-middleware": "^1.0.1",
+    "phoole/base": "^1.0.20"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8",
+    "guzzlehttp/psr7": "1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Phoole\\Route\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Phoole\\Tests\\": "tests/"
+    }
+  },
+  "provide": {
+    "psr/http-server-middleware-implementation": "^1.0"
+  },
+  "minimum-stability": "dev",
+  "scripts": {
+    "test": "phpunit",
+    "check": "phpcs --standard=psr12 src/",
+    "format": "phpcbf --standard=psr12 src/"
+  }
 }

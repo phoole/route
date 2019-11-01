@@ -56,9 +56,11 @@ class RouteAwareTraitTest extends TestCase
     public function testAddRoute()
     {
         $this->invokeMethod('setParser', [new FastRouteParser()]);
-        $route = new Route('POST', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
+        $route = new Route(
+            'POST', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
             return FALSE;
-        }, ['uid' => 100]);
+        }, ['uid' => 100]
+        );
         $this->obj->addRoute($route);
         $groups = $this->getPrivateProperty($this->obj, 'groups');
         $this->assertEquals(1, count($groups));
@@ -80,20 +82,26 @@ class RouteAwareTraitTest extends TestCase
     public function testAddGet()
     {
         $this->invokeMethod('setParser', [new FastRouteParser()]);
-        $this->obj->addGet('/usr[/{uid:d=20}][/{pid:d=1}]', function() {
+        $this->obj->addGet(
+            '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
             return FALSE;
-        }, ['uid' => 100]);
-        $this->obj->addPost('/usr[/{uid:d=20}][/{pid:d=1}]', function() {
+        }, ['uid' => 100]
+        );
+        $this->obj->addPost(
+            '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
             return FALSE;
-        }, ['uid' => 20]);
+        }, ['uid' => 20]
+        );
         $groups = $this->getPrivateProperty($this->obj, 'groups');
         $grp = $groups['/usr'];
         $this->assertTrue($grp instanceof RouteGroup);
         $routes = $this->getPrivateProperty($grp, 'routes');
         $this->assertEquals(1, count($routes));
-        $this->obj->addPost('/usr', function() {
+        $this->obj->addPost(
+            '/usr', function() {
             return FALSE;
-        }, ['uid' => 20]);
+        }, ['uid' => 20]
+        );
         $routes = $this->getPrivateProperty($grp, 'routes');
         $this->assertEquals(2, count($routes));
     }
@@ -104,16 +112,20 @@ class RouteAwareTraitTest extends TestCase
     public function testLoadRoutes()
     {
         $this->invokeMethod('setParser', [new FastRouteParser()]);
-        $this->invokeMethod('loadRoutes', [
-            [
-                ['GET', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
-                    return TRUE;
-                }, ['pid' => 2]],
-                ['POST', '/usr/add', function() {
-                    return TRUE;
-                }],
+        $this->invokeMethod(
+            'loadRoutes', [
+                [
+                    ['GET', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
+                        return TRUE;
+                    }, ['pid' => 2]
+                    ],
+                    ['POST', '/usr/add', function() {
+                        return TRUE;
+                    }
+                    ],
+                ]
             ]
-        ]);
+        );
         $groups = $this->getPrivateProperty($this->obj, 'groups');
         $this->assertEquals(1, count($groups));
         $grp = $groups['/usr'];
@@ -127,23 +139,33 @@ class RouteAwareTraitTest extends TestCase
     public function testGroupMatch()
     {
         $this->invokeMethod('setParser', [new FastRouteParser()]);
-        $this->invokeMethod('loadRoutes', [
-            [
-                ['GET', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
-                    return TRUE;
-                }, ['pid' => 2]],
-                ['POST', '/usr/add', function() {
-                    return TRUE;
-                }],
+        $this->invokeMethod(
+            'loadRoutes', [
+                [
+                    ['GET', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
+                        return TRUE;
+                    }, ['pid' => 2]
+                    ],
+                    ['POST', '/usr/add', function() {
+                        return TRUE;
+                    }
+                    ],
+                ]
             ]
-        ]);
-        $result = $this->invokeMethod('groupMatch', [new Result(
-            new ServerRequest('GET', 'http://bingo.com/xusr/10/2')
-        )]);
+        );
+        $result = $this->invokeMethod(
+            'groupMatch', [new Result(
+                               new ServerRequest('GET', 'http://bingo.com/xusr/10/2')
+                           )
+            ]
+        );
         $this->assertFalse($result->isMatched());
-        $result = $this->invokeMethod('groupMatch', [new Result(
-            new ServerRequest('GET', 'http://bingo.com/usr/10/2')
-        )]);
+        $result = $this->invokeMethod(
+            'groupMatch', [new Result(
+                               new ServerRequest('GET', 'http://bingo.com/usr/10/2')
+                           )
+            ]
+        );
         $this->assertTrue($result->isMatched());
     }
 

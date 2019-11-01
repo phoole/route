@@ -31,9 +31,13 @@ class ResultTest extends TestCase
     public function testSetRoute()
     {
         $pattern = '/usr[/{uid:d}][/{pid:d}]';
-        $this->obj->setRoute(new Route('GET,HEAD', $pattern, function() {
-            return FALSE;
-        }, ['uid' => 100]));
+        $this->obj->setRoute(
+            new Route(
+                'GET,HEAD', $pattern, function() {
+                return FALSE;
+            }, ['uid' => 100]
+            )
+        );
         $route = $this->obj->getRoute();
         $this->assertEquals($pattern, $route->getPattern());
         $this->assertEquals(2, count($route->getMethods()));
@@ -67,9 +71,13 @@ class ResultTest extends TestCase
     {
         $this->assertFalse($this->obj->isMatched());
         $pattern = '/usr[/{uid:d}][/{pid:d}]';
-        $this->obj->setRoute(new Route('GET,HEAD', $pattern, function() {
-            return FALSE;
-        }, ['uid' => 100]));
+        $this->obj->setRoute(
+            new Route(
+                'GET,HEAD', $pattern, function() {
+                return FALSE;
+            }, ['uid' => 100]
+            )
+        );
         $this->assertTrue($this->obj->isMatched());
     }
 

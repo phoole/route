@@ -24,9 +24,13 @@ class RouteGroupTest extends TestCase
      */
     public function testAddRoute()
     {
-        $this->obj->addRoute(new Route('GET,HEAD', '/usr[/{uid:d}][/{pid:d}]', function() {
-            return FALSE;
-        }, ['uid' => 100]));
+        $this->obj->addRoute(
+            new Route(
+                'GET,HEAD', '/usr[/{uid:d}][/{pid:d}]', function() {
+                return FALSE;
+            }, ['uid' => 100]
+            )
+        );
         $this->assertEquals(1, count($this->getPrivateProperty($this->obj, 'routes')));
         $result = new Result(new ServerRequest('GET', 'http://bingo.com/usr/10/2'));
         $this->assertTrue($this->obj->match($result));

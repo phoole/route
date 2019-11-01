@@ -105,9 +105,11 @@ class RouteTest extends TestCase
         };
         $defaults = ['test' => 'bingo'];
         $this->obj->setMethods($method, $handler, $defaults);
-        $obj = new Route('POST', '/usr/*', function() {
+        $obj = new Route(
+            'POST', '/usr/*', function() {
             return FALSE;
-        }, ['uid' => 100]);
+        }, ['uid' => 100]
+        );
         $this->obj->addMethods($obj);
         $methods = $this->obj->getMethods();
         $this->assertEquals(3, count($methods));
@@ -120,9 +122,11 @@ class RouteTest extends TestCase
     public function testConstruct()
     {
         $pattern = '/blog[/{section=1}][/{year:d=2}[/{month:d=03}[/{date:d=08}]]]';
-        $obj = new Route('POST', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
+        $obj = new Route(
+            'POST', '/usr[/{uid:d=20}][/{pid:d=1}]', function() {
             return FALSE;
-        }, ['uid' => 100]);
+        }, ['uid' => 100]
+        );
         $this->assertEquals('/usr[/{uid:d}][/{pid:d}]', $obj->getPattern());
         list($handler, $defaults) = $obj->getMethods()['POST'];
         $this->assertEquals(['uid' => 100, 'pid' => '1'], $defaults);
@@ -131,9 +135,11 @@ class RouteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->obj = new Route('GET,HEAD', '/usr/*', function() {
+        $this->obj = new Route(
+            'GET,HEAD', '/usr/*', function() {
             return FALSE;
-        }, ['uid' => 100]);
+        }, ['uid' => 100]
+        );
         $this->ref = new \ReflectionClass(get_class($this->obj));
     }
 

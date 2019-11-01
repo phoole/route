@@ -34,18 +34,24 @@ class DefaultResolverTest extends TestCase
      */
     public function testResolve()
     {
-        $this->assertTrue(is_callable(
-            $this->obj->resolve([myController::class, 'myMethod'])
-        ));
+        $this->assertTrue(
+            is_callable(
+                $this->obj->resolve([myController::class, 'myMethod'])
+            )
+        );
         $obj = new DefaultResolver(__NAMESPACE__);
-        $this->assertTrue(is_callable(
-            $obj->resolve(['myController', 'myMethod'])
-        ));
+        $this->assertTrue(
+            is_callable(
+                $obj->resolve(['myController', 'myMethod'])
+            )
+        );
         $this->expectExceptionMessage('not found');
         $obj = new DefaultResolver();
-        $this->assertTrue(is_callable(
-            $obj->resolve(['Controller', 'myMethod'])
-        ));
+        $this->assertTrue(
+            is_callable(
+                $obj->resolve(['Controller', 'myMethod'])
+            )
+        );
     }
 
     protected function setUp(): void

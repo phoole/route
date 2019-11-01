@@ -28,13 +28,17 @@ class RouterTest extends TestCase
     public function testMatch()
     {
         $request = new ServerRequest('GET', 'http://bingo.com/usr/10');
-        $this->obj->addGet('/xxx[/{uid:d=20}][/{pid:d=1}]', function() {
+        $this->obj->addGet(
+            '/xxx[/{uid:d=20}][/{pid:d=1}]', function() {
             return FALSE;
-        });
+        }
+        );
         $pattern = '/usr[/{uid:d}][/{pid:d}]';
-        $this->obj->addGet($pattern, function() {
+        $this->obj->addGet(
+            $pattern, function() {
             return FALSE;
-        }, ['pid' => 100]);
+        }, ['pid' => 100]
+        );
         $result = $this->obj->match($request);
         $this->assertTrue($result->isMatched());
         $route = $result->getRoute();
