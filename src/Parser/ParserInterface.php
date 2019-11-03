@@ -20,6 +20,7 @@ interface ParserInterface
 {
     /**
      * Parse a named route pattern as follows into regular expression
+     *
      * '/blog/{section}[/{year:\d+}[/{month:\d+}[/{date:\d+}]]]'
      *
      * @param  string $routeName

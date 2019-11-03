@@ -13,6 +13,7 @@ namespace Phoole\Route\Resolver;
 
 /**
  * DefaultResolver
+ *
  * Resolving [controllerName, methodName]into a request handler callable
  *
  * @package Phoole\Route
@@ -53,6 +54,7 @@ class DefaultResolver implements ResolverInterface
 
     /**
      * Resolve [controller, action] to a callable
+     *
      * {@inheritDoc}
      */
     public function resolve($notCallable): callable

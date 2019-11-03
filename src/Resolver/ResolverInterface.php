@@ -21,7 +21,10 @@ interface ResolverInterface
 {
     /**
      * Resolve the given into a callable of
+     *
+     * ```php
      * callable(ServerRequestInterface $request): ResponseInterface
+     * ```
      *
      * @param  mixed $notCallable  e.g. [controllerName, methodName]
      * @return callable
