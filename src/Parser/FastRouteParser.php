@@ -94,6 +94,22 @@ class FastRouteParser implements ParserInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function match(string $uriPath): array
+    {
+        $matches = [];
+        foreach ($this->getRegexData() as $i => $regex) {
+            if (preg_match($regex, $uriPath, $matches)) {
+                $map = array_flip($this->xmap[$i]);
+                $key = $map[count($matches) - 1];
+                return $this->fixMatches($key, $matches);
+            }
+        }
+        return $matches;
+    }
+
+    /**
      * Convert to regex
      *
      * @param  string $pattern  pattern to parse
@@ -130,22 +146,6 @@ class FastRouteParser implements ParserInterface
     ) {
         $this->regex[$routeName] = $regex;
         $this->modified = TRUE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function match(string $uriPath): array
-    {
-        $matches = [];
-        foreach ($this->getRegexData() as $i => $regex) {
-            if (preg_match($regex, $uriPath, $matches)) {
-                $map = array_flip($this->xmap[$i]);
-                $key = $map[count($matches) - 1];
-                return $this->fixMatches($key, $matches);
-            }
-        }
-        return $matches;
     }
 
     /**

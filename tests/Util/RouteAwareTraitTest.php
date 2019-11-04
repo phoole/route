@@ -24,32 +24,6 @@ class RouteAwareTraitTest extends TestCase
     private $ref;
 
     /**
-     * @covers Phoole\Route\Util\RouteAwareTrait::extractPrefix()
-     */
-    public function testExtractPrefix()
-    {
-        $this->assertEquals(
-            '/usr',
-            $this->invokeMethod('extractPrefix', ['/usr[/bingo]'])
-        );
-        $this->assertEquals(
-            '/usr',
-            $this->invokeMethod('extractPrefix', ['/usr/bingo/2'])
-        );
-        $this->assertEquals(
-            '/',
-            $this->invokeMethod('extractPrefix', ['/[usr[/bingo/]]'])
-        );
-    }
-
-    protected function invokeMethod($methodName, array $parameters = array())
-    {
-        $method = $this->ref->getMethod($methodName);
-        $method->setAccessible(TRUE);
-        return $method->invokeArgs($this->obj, $parameters);
-    }
-
-    /**
      * @covers Phoole\Route\Util\RouteAwareTrait::addRoute()
      * @covers Phoole\Route\Util\RouteAwareTrait::setParser()
      */
@@ -62,9 +36,15 @@ class RouteAwareTraitTest extends TestCase
         }, ['uid' => 100]
         );
         $this->obj->addRoute($route);
-        $groups = $this->getPrivateProperty($this->obj, 'groups');
-        $this->assertEquals(1, count($groups));
-        $this->assertTrue(isset($groups['/usr']));
+        $routes = $this->getPrivateProperty($this->obj, 'routes');
+        $this->assertEquals(1, count($routes));
+    }
+
+    protected function invokeMethod($methodName, array $parameters = array())
+    {
+        $method = $this->ref->getMethod($methodName);
+        $method->setAccessible(TRUE);
+        return $method->invokeArgs($this->obj, $parameters);
     }
 
     public function getPrivateProperty($obj, $propertyName)
@@ -92,17 +72,15 @@ class RouteAwareTraitTest extends TestCase
             return FALSE;
         }, ['uid' => 20]
         );
-        $groups = $this->getPrivateProperty($this->obj, 'groups');
-        $grp = $groups['/usr'];
-        $this->assertTrue($grp instanceof RouteGroup);
-        $routes = $this->getPrivateProperty($grp, 'routes');
+
+        $routes = $this->getPrivateProperty($this->obj, 'routes');
         $this->assertEquals(1, count($routes));
         $this->obj->addPost(
             '/usr', function() {
             return FALSE;
         }, ['uid' => 20]
         );
-        $routes = $this->getPrivateProperty($grp, 'routes');
+        $routes = $this->getPrivateProperty($this->obj, 'routes');
         $this->assertEquals(2, count($routes));
     }
 
@@ -126,10 +104,7 @@ class RouteAwareTraitTest extends TestCase
                 ]
             ]
         );
-        $groups = $this->getPrivateProperty($this->obj, 'groups');
-        $this->assertEquals(1, count($groups));
-        $grp = $groups['/usr'];
-        $routes = $this->getPrivateProperty($grp, 'routes');
+        $routes = $this->getPrivateProperty($this->obj, 'routes');
         $this->assertEquals(2, count($routes));
     }
 
@@ -154,14 +129,14 @@ class RouteAwareTraitTest extends TestCase
             ]
         );
         $result = $this->invokeMethod(
-            'groupMatch', [new Result(
+            'routeMatch', [new Result(
                                new ServerRequest('GET', 'http://bingo.com/xusr/10/2')
                            )
             ]
         );
         $this->assertFalse($result->isMatched());
         $result = $this->invokeMethod(
-            'groupMatch', [new Result(
+            'routeMatch', [new Result(
                                new ServerRequest('GET', 'http://bingo.com/usr/10/2')
                            )
             ]

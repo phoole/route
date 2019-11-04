@@ -47,6 +47,22 @@ class RouterTest extends TestCase
         $this->assertEquals(['pid' => 100, 'uid' => '10'], $params);
     }
 
+    /**
+     * Test auto controller/action match
+     *
+     * @covers Phoole\Route\Router::handleResult()
+     */
+    public function testHandleResult()
+    {
+        $request = new ServerRequest('GET', 'http://bingo.com/user/list');
+        $this->obj->addGet('/{controller:xd}/{action:xd}', ['${controller}', '${action}']);
+        $result = $this->obj->match($request);
+        $this->assertTrue($result->isMatched());
+
+        $this->expectExceptionMessage('userController');
+        $handler = $this->invokeMethod('handleResult', [$result]);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

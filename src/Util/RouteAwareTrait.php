@@ -11,6 +11,7 @@ declare(strict_types = 1);
 
 namespace Phoole\Route\Util;
 
+use Phoole\Route\Router;
 use Phoole\Route\Parser\ParserInterface;
 
 /**
@@ -26,9 +27,9 @@ trait RouteAwareTrait
     protected $parser;
 
     /**
-     * @var RouteGroup[]
+     * @var Route[]
      */
-    protected $groups = [];
+    protected $routes = [];
 
     /**
      * Add a GET route
@@ -51,29 +52,16 @@ trait RouteAwareTrait
      */
     public function addRoute(Route $route)
     {
-        // group routes base on the URI prefix
-        $prefix = $this->extractPrefix($route->getPattern());
-
-        if (!isset($this->groups[$prefix])) {
-            $this->groups[$prefix] = new RouteGroup($this->parser);
+        $pattern = $route->getPattern();
+        $hash = md5($route->getPattern());
+        if (isset($this->routes[$hash])) {
+            $this->routes[$hash]->addMethods($route);
+        } else {
+            $this->routes[$hash] = $route;
         }
-        $this->groups[$prefix]->addRoute($route);
 
+        $this->parser->parse($hash, $pattern);
         return $this;
-    }
-
-    /**
-     * Extract the URI prefix, '/usr/' from '/user/uid/1'
-     *
-     * @param  string $uri  URI or pattern
-     * @return string
-     */
-    protected function extractPrefix(string $uri): string
-    {
-        if (preg_match('~^(/[^/\[\]\{\}]+)~', $uri, $matched)) {
-            return $matched[1];
-        }
-        return '/';
     }
 
     /**
@@ -124,20 +112,49 @@ trait RouteAwareTrait
     }
 
     /**
-     * Match a http request with all RouteGroup[s]
+     * Match a route with all predefined routes
      *
      * @param  Result $result  ;
      * @return Result
      */
-    protected function groupMatch(Result $result): Result
+    protected function routeMatch(Result $result): Result
     {
         $uri = $result->getRequest()->getUri()->getPath();
-        foreach ($this->groups as $prefix => $group) {
-            // check prefix, then do matching
-            if ($prefix === $this->extractPrefix($uri) && $group->match($result)) {
-                return $result;
-            }
+
+        $matched = $this->parser->match($uri);
+        if (!empty($matched)) {
+            $this->fetchMatched($matched, $result);
         }
+
         return $result;
+    }
+
+    /**
+     * @param  array  $matched
+     * @param  Result $result
+     * @return void
+     */
+    protected function fetchMatched(array $matched, Result $result): void
+    {
+        // fetch the matched route
+        list($hash, $params) = $matched;
+        $route = $this->routes[$hash];
+
+        // check if method exists
+        $request = $result->getRequest();
+        $method = $request->getMethod();
+        if (isset($route->getMethods()[$method])) {
+            // update request
+            list($handler, $defaults) = $route->getMethods()[$method];
+            $request = $request->withAttribute(
+                Router::URI_PARAMETERS,
+                array_merge($defaults, $params)
+            );
+
+            // update result
+            $result->setHandler($handler);
+            $result->setRoute($route);
+            $result->setRequest($request);
+        }
     }
 }

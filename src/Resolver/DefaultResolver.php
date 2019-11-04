@@ -11,6 +11,8 @@ declare(strict_types = 1);
 
 namespace Phoole\Route\Resolver;
 
+use Phoole\Base\Reference\ReferenceTrait;
+
 /**
  * DefaultResolver
  *
@@ -20,6 +22,8 @@ namespace Phoole\Route\Resolver;
  */
 class DefaultResolver implements ResolverInterface
 {
+    use ReferenceTrait;
+
     /**
      * @var string
      */
@@ -34,6 +38,13 @@ class DefaultResolver implements ResolverInterface
      * var string
      */
     protected $actionSuffix;
+
+    /**
+     * used for resolving '${controller}' etc.
+     *
+     * @var array
+     */
+    protected $params;
 
     /**
      * set the namespace to search thru
@@ -57,18 +68,44 @@ class DefaultResolver implements ResolverInterface
      *
      * {@inheritDoc}
      */
-    public function resolve($notCallable): callable
+    public function resolve($notCallable, array $params = []): callable
     {
         try {
-            $controller = $this->namespace . '\\' . $notCallable[0] . $this->controllerSuffix;
-            $action = $notCallable[1] . $this->actionSuffix;
-            $result = [new $controller(), $action];
-            if (is_callable($result)) {
-                return $result;
-            }
-            throw new \Exception("unable to resolve " . $notCallable[0]);
+            /**
+             * dereference if any parameters used in callable definition
+             * such as ['${controller}', '${action}']
+             */
+            $this->params = $params;
+            $this->deReference($notCallable);
+
+            return $this->appendSuffix($notCallable);
         } catch (\Throwable $e) {
             throw new \InvalidArgumentException($e->getMessage());
+        }
+    }
+
+    /**
+     * @param  array $notCallable
+     * @return callable
+     */
+    protected function appendSuffix(array $notCallable): callable
+    {
+        $controller = $this->namespace . '\\' . $notCallable[0] . $this->controllerSuffix;
+        $action = $notCallable[1] . $this->actionSuffix;
+        return [new $controller(), $action];
+    }
+
+    /**
+     * resolve parameters
+     *
+     * {@inheritDoc}
+     */
+    protected function getReference(string $name)
+    {
+        if (isset($this->params[$name])) {
+            return $this->params[$name];
+        } else {
+            return NULL;
         }
     }
 }

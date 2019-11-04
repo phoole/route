@@ -27,8 +27,9 @@ interface ResolverInterface
      * ```
      *
      * @param  mixed $notCallable  e.g. [controllerName, methodName]
+     * @param  array $params       parameters used to resolve callable
      * @return callable
      * @throws \InvalidArgumentException  unable to resolve
      */
-    public function resolve($notCallable): callable;
+    public function resolve($notCallable, array $params = []): callable;
 }
