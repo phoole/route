@@ -6,7 +6,7 @@
 [![Latest Stable Version](https://img.shields.io/github/v/release/phoole/route)](https://packagist.org/packages/phoole/route)
 [![License](https://img.shields.io/github/license/phoole/route)]()
 
-Slim &amp; fast routing library for PHP
+Slim, fast and full compatible PSR-7 & PSR-15 routing library for PHP.
 
 Why another routing library ?
 ---
